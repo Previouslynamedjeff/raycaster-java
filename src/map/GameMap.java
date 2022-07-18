@@ -88,4 +88,13 @@ public class GameMap implements Drawable {
         }
         return info;
     }
+
+    public boolean checkSolid(double x, double y) {
+        int mapX = (int) (x / this.tileWidth);
+        int mapY = (int) (y / this.tileWidth);
+
+        Tile tile = this.tiles[mapY][mapX];
+
+        return tile.checkSolid();
+    }
 }

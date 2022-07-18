@@ -4,24 +4,36 @@ import src.window.Window;
 import src.window.Canvas;
 
 import src.map.GameMap;
+import src.game.Player;
 
 import src.window.Drawable;
 import java.awt.Graphics;
 import java.awt.Color;
+
+import javax.swing.Timer;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 class Raycaster {
     private Window window;
     private Canvas gameCanvas;
     private Canvas mapCanvas;
 
+    private GameMap map;
+    private Player player;
+
+    private Timer updateTimer;
+
     public Raycaster() {
+        this.map = new GameMap(Const.MAP_WIDTH, Const.MAP_HEIGHT, Const.TILE_WIDTH);
+        this.map.loadFromFile(Const.MAP_FILE_NAME);
+        this.player = new Player(Const.TILE_WIDTH * 2, Const.TILE_WIDTH * 3, this.map, Const.PLAYER_MOVE_SPEED, Const.PLAYER_TURN_SPEED);
+
         this.initializeWindow();
 
-        GameMap map = new GameMap(Const.MAP_WIDTH, Const.MAP_HEIGHT, 32);
-        map.loadFromFile(Const.MAP_FILE_NAME);
-        System.out.println(map);
-
-        Drawable gradient = new Drawable() {
+        this.mapCanvas.addDrawable(this.map);
+        this.mapCanvas.addDrawable(this.player);
+        this.gameCanvas.addDrawable(new Drawable() {
             @Override
             public void draw(Graphics graphics) {
                 for (int y = 0; y < 256; y++) {
@@ -35,16 +47,24 @@ class Raycaster {
                     }
                 }
             }
-            
-        };
+        });
 
-        this.mapCanvas.addDrawable(map);
-        this.gameCanvas.addDrawable(gradient);
+        this.gameCanvas.addKeyListener(this.player.new InputHandler());
+
+        this.updateTimer = new Timer(Const.UPDATE_RATE, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                update();
+            }
+        });
     }
 
-    public  void initializeWindow() {
+    private void update() {
+        this.player.update();
+    }
+
+    public void initializeWindow() {
         this.window = new Window("Raycaster", Const.SCREEN_WIDTH, 
-        Const.SCREEN_HEIGHT, Const.FRAMES_PER_SECOND);
+        Const.SCREEN_HEIGHT, Const.FRAME_RATE);
 
         this.gameCanvas = new Canvas();
         this.mapCanvas = new Canvas();
@@ -54,6 +74,7 @@ class Raycaster {
 
     public void start() {
         this.window.start();
+        this.updateTimer.start();
     }
 
     public static void main(String[] args) {
