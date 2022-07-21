@@ -1,6 +1,7 @@
 package src.game;
 
 import src.math.Vector;
+import src.math.Ray;
 import src.map.GameMap;
 
 import src.window.Drawable;
@@ -13,39 +14,62 @@ import java.awt.event.KeyEvent;
 
 public class Player implements Drawable {
     private Vector pos;
-    private double direction;
+    private double angle;
+    private double viewAngle;
+    private Ray[] rays;
     private GameMap map;
     private double maxMoveSpeed;
     private double maxTurnSpeed;
     private double curMoveSpeed;
     private double curTurnSpeed;
 
-    public Player(Vector startPos, GameMap map, double moveSpeed, double turnSpeed) {
+    public Player(Vector startPos, GameMap map, double moveSpeed, double turnSpeed, double viewAngle) {
         this.pos = startPos.clone();
         this.map = map;
-        this.direction = 0;
+        this.angle = 0;
+        this.viewAngle = viewAngle;
         this.maxMoveSpeed = moveSpeed;
         this.maxTurnSpeed = turnSpeed;
         this.curMoveSpeed = 0;
         this.curTurnSpeed = 0;
+
+        this.rays = new Ray[1];
+        rays[0] = new Ray(this.pos, this.angle);
     }
 
-    public Player(double x, double y, GameMap map, double moveSpeed, double turnSpeed) {
-        this(new Vector(x, y), map, moveSpeed, turnSpeed);
+    public Player(double x, double y, GameMap map, double moveSpeed, double turnSpeed, double viewAngle) {
+        this(new Vector(x, y), map, moveSpeed, turnSpeed, viewAngle);
     }
 
     public void update() {
+        boolean moved = false;
         if (Double.compare(this.curTurnSpeed, 0) != 0) {
             this.turn(this.curTurnSpeed);
+            moved = true;
         }
 
         if (Double.compare(this.curMoveSpeed, 0)!= 0) {
             this.move(this.curMoveSpeed);
+            moved = true;
+        }
+
+        if (moved) {
+            this.castRays();
+        }
+    }
+
+    public void castRays() {
+        for (Ray ray: this.rays) {
+            ray.setAngle(this.angle);
+            ray.resetLength();
+            while (!this.map.checkSolid(ray.getEndPos())) {
+                ray.lengthen();
+            }
         }
     }
 
     public void move(double distance) {
-        double radians = Math.toRadians(this.direction);
+        double radians = Math.toRadians(this.angle);
 
         double dx = Math.cos(radians) * distance;
         double dy = Math.sin(radians) * distance;
@@ -54,21 +78,19 @@ public class Player implements Drawable {
         tmp.add(dx, dy);
 
         if (!this.map.checkSolid(tmp.getX(), tmp.getY())) {
-            this.pos = tmp;
+            this.pos.add(dx, dy);
         }
     }
 
-
-
     public void turn(double degrees) {
-        this.direction += degrees;
+        this.angle += degrees;
 
         // Ensure 0 <= player direction < 360.
-        while(Double.compare(this.direction, 0) < 0) {
-            this.direction += 360;
+        while(Double.compare(this.angle, 0) < 0) {
+            this.angle += 360;
         } 
-        while (Double.compare(this.direction, 360) >= 0) {
-            this.direction -= 360;
+        while (Double.compare(this.angle, 360) >= 0) {
+            this.angle -= 360;
         }
     }
 
@@ -82,14 +104,9 @@ public class Player implements Drawable {
         graphics.setColor(Color.BLACK);
         graphics.drawOval((int) this.pos.getX() - l, (int) this.pos.getY() - l, 2*l, 2*l);
 
-        // Draw the current direction.
-        double radians = Math.toRadians(this.direction);
-        int x1 = (int) this.pos.getX();
-        int y1 = (int) this.pos.getY();
-        int x2 = (int) (Math.cos(radians) * 4*l + this.pos.getX());
-        int y2 = (int) (Math.sin(radians) * 4*l + this.pos.getY());
-
-        graphics.drawLine(x1, y1, x2, y2);
+        for (Ray ray: this.rays) {
+            ray.draw(graphics);
+        }
     }
 
     public class InputHandler implements KeyListener {

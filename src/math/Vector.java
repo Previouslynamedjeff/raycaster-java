@@ -84,6 +84,11 @@ public class Vector {
         this.y = y;
     }
 
+    public void setLength(double length) {
+        this.normalize();
+        this.scale(length); 
+    }
+
     @Override
     public Vector clone() {
         return new Vector(this.x, this.y);
@@ -92,5 +97,12 @@ public class Vector {
     @Override
     public String toString() {
         return "(" + this.x + ", " + this.y + ")";
+    }
+
+    // --- Static Methods ---
+    public static Vector sum(Vector v1, Vector v2) {
+        Vector tmp = v1.clone();
+        tmp.add(v2);
+        return tmp;
     }
 }

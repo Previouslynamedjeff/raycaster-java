@@ -25,9 +25,10 @@ class Raycaster {
     private Timer updateTimer;
 
     public Raycaster() {
-        this.map = new GameMap(Const.MAP_WIDTH, Const.MAP_HEIGHT, Const.TILE_WIDTH);
+        this.map = new GameMap(Const.TILE_WIDTH);
         this.map.loadFromFile(Const.MAP_FILE_NAME);
-        this.player = new Player(Const.TILE_WIDTH * 2, Const.TILE_WIDTH * 3, this.map, Const.PLAYER_MOVE_SPEED, Const.PLAYER_TURN_SPEED);
+        this.player = new Player(Const.TILE_WIDTH * 2, Const.TILE_WIDTH * 4, this.map, 
+                Const.PLAYER_MOVE_SPEED, Const.PLAYER_TURN_SPEED, Const.PLAYER_VIEW_ANGLE);
 
         this.initializeWindow();
 

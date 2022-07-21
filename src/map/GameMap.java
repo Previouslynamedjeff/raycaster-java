@@ -10,17 +10,15 @@ import src.window.Drawable;
 import java.awt.Graphics;
 import java.awt.Color;
 
+import src.math.Vector;
+
 public class GameMap implements Drawable {
     private Tile[][] tiles;
 
     private int tileWidth;
 
-    public GameMap(int width, int height, int tileWidth) {
-        this.tiles = new Tile[height][width];
-
-        for (Tile[] tileRow: this.tiles) {
-            Arrays.fill(tileRow, Tile.UNRECOGNIZED);
-        }
+    public GameMap(int tileWidth) {
+        this.tiles = new Tile[0][0];
 
         this.tileWidth = tileWidth;
     }
@@ -35,6 +33,12 @@ public class GameMap implements Drawable {
             System.out.println("Error: Map file not found. [" + fileName + "]");
             return;
         }
+
+        int width = scanner.nextInt();
+        int height = scanner.nextInt();
+        this.tiles = new Tile[height][width];
+
+        scanner.nextLine();
 
         for (int y = 0; y < this.getHeight() && scanner.hasNextLine(); y++) {
             String line = scanner.nextLine();
@@ -93,8 +97,16 @@ public class GameMap implements Drawable {
         int mapX = (int) (x / this.tileWidth);
         int mapY = (int) (y / this.tileWidth);
 
+        if (mapX < 0 || mapX >= this.getWidth() || mapY < 0 || mapY >= this.getHeight()) {
+            return true;
+        }
+
         Tile tile = this.tiles[mapY][mapX];
 
         return tile.checkSolid();
+    }
+
+    public boolean checkSolid(Vector pos) {
+        return this.checkSolid(pos.getX(), pos.getY());
     }
 }
