@@ -4,7 +4,7 @@ import java.awt.Graphics;
 import src.window.Drawable;
 
 public class Ray implements Drawable {
-    private final static double STEP = 2;
+    private final static double STEP = 1;
     private Vector startPos;
     private Vector direction;
     private double angle;
@@ -29,6 +29,10 @@ public class Ray implements Drawable {
         return Vector.sum(this.startPos, this.direction);
     }
 
+    public double getLength() {
+        return this.direction.getMagnitude();
+    }
+
     public void lengthen() {
         this.direction.setLength(this.direction.getMagnitude() + STEP);
     }
@@ -50,6 +54,6 @@ public class Ray implements Drawable {
 
     @Override
     public String toString() {
-        return this.startPos + " --> " + this.getEndPos() + " | dir: " + this.direction; 
+        return "start=" + this.startPos + " end=" + this.getEndPos() + " dir=" + this.direction; 
     }
 }

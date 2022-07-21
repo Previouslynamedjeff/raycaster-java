@@ -2,7 +2,7 @@
 
 ## Introduction
 
-raycaster-java is a basic raycaster. 
+raycaster-java is a basic raycaster demo meant to test the basics of raycasting.
 
 ## Build
 

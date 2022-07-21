@@ -1,7 +1,5 @@
 package src.map;
 
-import java.util.Arrays;
-
 import java.util.Scanner;
 import java.io.File;
 import java.io.IOException;
@@ -47,10 +45,12 @@ public class GameMap implements Drawable {
 
                 if (symbol == Tile.BORDER.getSymbol()) {
                     this.tiles[y][x] = Tile.BORDER;
-                } else if (symbol == Tile.WALL.getSymbol()) {
-                    this.tiles[y][x] = Tile.WALL;
-                } else if (symbol == Tile.AIR.getSymbol()) {
-                    this.tiles[y][x] = Tile.AIR;
+                } else if (symbol == Tile.BLUE_WALL.getSymbol()) {
+                    this.tiles[y][x] = Tile.BLUE_WALL;
+                } else if (symbol == Tile.RED_WALL.getSymbol()) {
+                    this.tiles[y][x] = Tile.RED_WALL;
+                } else if (symbol == Tile.FLOOR.getSymbol()) {
+                    this.tiles[y][x] = Tile.FLOOR;
                 } else {
                     this.tiles[y][x] = Tile.UNRECOGNIZED;
                 }
@@ -93,20 +93,28 @@ public class GameMap implements Drawable {
         return info;
     }
 
-    public boolean checkSolid(double x, double y) {
+    public Tile getTileAtCoord(double x, double y) {
         int mapX = (int) (x / this.tileWidth);
         int mapY = (int) (y / this.tileWidth);
 
         if (mapX < 0 || mapX >= this.getWidth() || mapY < 0 || mapY >= this.getHeight()) {
-            return true;
+            return Tile.UNRECOGNIZED;
         }
 
         Tile tile = this.tiles[mapY][mapX];
 
-        return tile.checkSolid();
+        return tile;
+    }
+
+    public Tile getTileAtCoord(Vector pos) {
+        return this.getTileAtCoord(pos.getX(), pos.getY());
+    }
+
+    public boolean checkSolid(double x, double y) {
+        return this.getTileAtCoord(x, y).checkSolid();
     }
 
     public boolean checkSolid(Vector pos) {
-        return this.checkSolid(pos.getX(), pos.getY());
+        return this.getTileAtCoord(pos).checkSolid();
     }
 }

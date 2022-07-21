@@ -2,7 +2,9 @@ package src.game;
 
 import src.math.Vector;
 import src.math.Ray;
+import src.Const;
 import src.map.GameMap;
+import src.map.Tile;
 
 import src.window.Drawable;
 
@@ -14,8 +16,10 @@ import java.awt.event.KeyEvent;
 
 public class Player implements Drawable {
     private Vector pos;
+    private double height;
     private double angle;
-    private double viewAngle;
+    private double viewWidth;
+    private double viewHeight;
     private Ray[] rays;
     private GameMap map;
     private double maxMoveSpeed;
@@ -23,22 +27,29 @@ public class Player implements Drawable {
     private double curMoveSpeed;
     private double curTurnSpeed;
 
-    public Player(Vector startPos, GameMap map, double moveSpeed, double turnSpeed, double viewAngle) {
+    public Player(Vector startPos, GameMap map, double moveSpeed, double turnSpeed, 
+            double viewWidth, double viewHeight, int numRays, double height) {
         this.pos = startPos.clone();
+        this.height = height;
         this.map = map;
-        this.angle = 0;
-        this.viewAngle = viewAngle;
+        this.angle = 45;
+        this.viewWidth = viewWidth;
+        this.viewHeight = viewHeight;
         this.maxMoveSpeed = moveSpeed;
         this.maxTurnSpeed = turnSpeed;
         this.curMoveSpeed = 0;
         this.curTurnSpeed = 0;
 
-        this.rays = new Ray[1];
-        rays[0] = new Ray(this.pos, this.angle);
+        this.rays = new Ray[numRays];
+        for (int i = 0; i < numRays; i++) {
+            this.rays[i] = new Ray(this.pos, this.angle);
+        }
+        this.castRays();
     }
 
-    public Player(double x, double y, GameMap map, double moveSpeed, double turnSpeed, double viewAngle) {
-        this(new Vector(x, y), map, moveSpeed, turnSpeed, viewAngle);
+    public Player(double x, double y, GameMap map, double moveSpeed, double turnSpeed, 
+            double viewWidth, double viewHeight, int numRays, double height) {
+        this(new Vector(x, y), map, moveSpeed, turnSpeed, viewWidth, viewHeight, numRays, height);
     }
 
     public void update() {
@@ -59,11 +70,14 @@ public class Player implements Drawable {
     }
 
     public void castRays() {
-        for (Ray ray: this.rays) {
-            ray.setAngle(this.angle);
-            ray.resetLength();
-            while (!this.map.checkSolid(ray.getEndPos())) {
-                ray.lengthen();
+        for (int i = 0; i < this.rays.length; i++) {
+            double rayAngle = this.angle - this.viewWidth / 2 + this.viewWidth * i / (this.rays.length - 1);
+            this.rays[i].setAngle(rayAngle);
+            this.rays[i].resetLength();
+
+            while (Double.compare(this.height, 
+                    this.map.getTileAtCoord(this.rays[i].getEndPos()).getHeight()) > 0) {
+                this.rays[i].lengthen();
             }
         }
     }
@@ -106,6 +120,23 @@ public class Player implements Drawable {
 
         for (Ray ray: this.rays) {
             ray.draw(graphics);
+        }
+    }
+
+    public class FOV implements Drawable {
+        @Override
+        public void draw(Graphics graphics) {
+            graphics.setColor(Tile.FLOOR.getColor());
+            graphics.fillRect(0, 0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
+            for (int i = 0; i < rays.length; i++) {
+                Tile tile = map.getTileAtCoord(rays[i].getEndPos());
+                Color color = tile.getColor();
+                double angleToTileTop = Math.toDegrees(Math.atan(tile.getHeight() / rays[i].getLength()));
+                double pxHeight = Const.CANVAS_HEIGHT * angleToTileTop / viewHeight;
+
+                graphics.setColor(color);
+                graphics.fillRect(i, (int) ((Const.CANVAS_HEIGHT - pxHeight) / 2), 1, (int) pxHeight);
+            }
         }
     }
 

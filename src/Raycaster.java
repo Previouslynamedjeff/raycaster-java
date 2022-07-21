@@ -28,27 +28,14 @@ class Raycaster {
         this.map = new GameMap(Const.TILE_WIDTH);
         this.map.loadFromFile(Const.MAP_FILE_NAME);
         this.player = new Player(Const.TILE_WIDTH * 2, Const.TILE_WIDTH * 4, this.map, 
-                Const.PLAYER_MOVE_SPEED, Const.PLAYER_TURN_SPEED, Const.PLAYER_VIEW_ANGLE);
+                Const.PLAYER_MOVE_SPEED, Const.PLAYER_TURN_SPEED, Const.PLAYER_VIEW_WIDTH, 
+                Const.PLAYER_VIEW_HEIGHT, Const.NUM_RAYS, Const.PLAYER_HEIGHT);
 
         this.initializeWindow();
 
         this.mapCanvas.addDrawable(this.map);
-        this.mapCanvas.addDrawable(this.player);
-        this.gameCanvas.addDrawable(new Drawable() {
-            @Override
-            public void draw(Graphics graphics) {
-                for (int y = 0; y < 256; y++) {
-                    for (int x = 0; x < 256; x++) {
-                        int r = 255 - (x + y) / 2;
-                        int g = 0;
-                        int b = (x + y) / 2;
-                        Color col = new Color(r, g, b);
-                        graphics.setColor(col);
-                        graphics.fillRect(127 + x, 127 + y, 1, 1);
-                    }
-                }
-            }
-        });
+        // this.mapCanvas.addDrawable(this.player);
+        this.gameCanvas.addDrawable(this.player.new FOV());
 
         this.gameCanvas.addKeyListener(this.player.new InputHandler());
 
