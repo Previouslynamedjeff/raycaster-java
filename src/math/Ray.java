@@ -4,7 +4,7 @@ import java.awt.Graphics;
 import src.window.Drawable;
 
 public class Ray implements Drawable {
-    private final static double STEP = 1;
+    private final static double STEP = 0.2;
     private Vector startPos;
     private Vector direction;
     private double angle;
