@@ -6,10 +6,10 @@ A..............A
 A.......R......A
 A.......B......A
 A.....RBRBRBRB.A
-A.....R..B..B..A
+A.....B..B..B..A
 A...........R..A
 A.....B.....B..A
-A...RBRBRBRBR..A
+A...RBRBR..BR..A
 A....R.........A
 A....B......B..A
 A....RBR...BR..A

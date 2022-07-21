@@ -11,8 +11,8 @@ public final class Const {
     public static final int FRAME_RATE = MS_PER_S / 45;
     public static final int UPDATE_RATE = FRAME_RATE;
 
-    public static final String MAP_FILE_NAME = "assets/map/map2.txt";
-    public static final int TILE_WIDTH = 16;
+    public static final String MAP_FILE_NAME = "assets/map/map3.txt";
+    public static final int TILE_WIDTH = 32;
 
     public static final double PLAYER_MOVE_SPEED = 3;
     public static final double PLAYER_TURN_SPEED = 5;
