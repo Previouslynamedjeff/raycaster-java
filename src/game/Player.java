@@ -129,9 +129,11 @@ public class Player implements Drawable {
             graphics.setColor(Tile.FLOOR.getColor());
             graphics.fillRect(0, 0, Const.CANVAS_WIDTH, Const.CANVAS_HEIGHT);
             for (int i = 0; i < rays.length; i++) {
-                Tile tile = map.getTileAtCoord(rays[i].getEndPos());
+                Ray ray = rays[i];
+                Tile tile = map.getTileAtCoord(ray.getEndPos());
                 Color color = tile.getColor();
-                double angleToTileTop = Math.toDegrees(Math.atan(tile.getHeight() / rays[i].getLength()));
+                double dx = Math.cos(Math.toRadians(angle) - ray.getRadians()) * ray.getLength();
+                double angleToTileTop = Math.toDegrees(Math.atan2(tile.getHeight() - height, dx));
                 double pxHeight = Const.CANVAS_HEIGHT * angleToTileTop / viewHeight;
 
                 graphics.setColor(color);

@@ -34,7 +34,7 @@ class Raycaster {
         this.initializeWindow();
 
         this.mapCanvas.addDrawable(this.map);
-        // this.mapCanvas.addDrawable(this.player);
+        this.mapCanvas.addDrawable(this.player);
         this.gameCanvas.addDrawable(this.player.new FOV());
 
         this.gameCanvas.addKeyListener(this.player.new InputHandler());

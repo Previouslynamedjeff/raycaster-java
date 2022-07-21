@@ -71,6 +71,10 @@ public class Vector {
         return copy;
     }
 
+    public double getRadians() {
+        return Math.atan2(this.y, this.x);
+    }
+
     public void setX(double x) {
         this.x = x;
     }

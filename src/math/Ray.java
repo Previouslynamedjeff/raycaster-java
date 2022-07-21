@@ -29,8 +29,16 @@ public class Ray implements Drawable {
         return Vector.sum(this.startPos, this.direction);
     }
 
+    public Vector getDir() {
+        return this.direction;
+    }
+
     public double getLength() {
         return this.direction.getMagnitude();
+    }
+
+    public double getRadians() {
+        return this.direction.getRadians();
     }
 
     public void lengthen() {
